@@ -1,0 +1,34 @@
+{
+  "name": "smartcard-interface",
+  "version": "1.0.0",
+  "description": "Wraps smartcard on mac/linux and pcsc on windows.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "jsdoc2md index.js > docs.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AskingQuestions/smartcard-interface.git"
+  },
+  "keywords": [
+    "smartcard",
+    "javacard",
+    "pcsc"
+  ],
+  "author": "AskingQuestions",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AskingQuestions/smartcard-interface/issues"
+  },
+  "homepage": "https://github.com/AskingQuestions/smartcard-interface#readme",
+  "dependencies": {
+    "node-addon-api": "^1.7.1",
+    "bindings": "~1.2.1",
+    "smartcard": "^1.0.29"
+  },
+  "gypfile": true,
+  "devDependencies": {
+    "jsdoc-to-markdown": "^5.0.0"
+  }
+}

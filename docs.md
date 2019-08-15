@@ -1,70 +1,3 @@
-# smartcard-interface
-A simple package for sending commands into smartcards.
-
-***Note:** This simply wraps the smartcard package on mac/linux and pcsc on windows.*
-
-## Installation
-```bash
-$ npm install smartcard-interface
-```
-
-## Usage
-```js
-const { DeviceManager } = require("smartcard-interface");
-
-let devices = new DeviceManager();
-
-// Called when a device is inserted.
-devices.on("activate", (e) => {
-	let device = e.device;
-
-	console.log("Device activated", device.name);
-
-	device.on("insert", async (e) => {
-		let card = e.card;
-
-		console.log("Card inserted", card.getAtr());
-
-		card.connect();
-
-		// Select an applet.
-		let selectResponse = await card.sendCommand(Buffer.from([
-			0x00,
-			0xA4,
-			0x04,
-			0x00,
-			0x09,
-			...Buffer.from("000000000000000000", "hex") // AID
-		]));
-
-		console.log(selectResponse);
-
-		// Send a command into the applet.
-		let pubKey = await card.sendCommand(Buffer.from([
-			0x00, // CLA
-			0x32, // INS
-			0x00, // P1
-			0x00, // P2
-			0x20  // LE
-		]));
-
-		console.log(pubKey);
-
-		card.close();
-	});
-
-	device.on("removed", (e) => {
-		let card = e.card;
-
-		console.log("Card removed", card.getAtr());
-	});
-});
-
-```
-
-
-## Documentation
-
 ## Classes
 
 <dl>
@@ -135,18 +68,7 @@ Executes the APDUBuffer on the card.
 
 **Example**  
 ```js
-let aid = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-
-card.connect(); // You need to connect in order to issue commands.
-
-// Selects the aid above.
-let response = await card.sendCommand(Buffer.from([
-		[0x00, 0xA4, 0x04, 0x00, 0x00, 0x09, ...aid]
-]));
-
-console.log("Response", response); // Buffer < 90 00 >
-
-card.close(); // Don't forget to close the connection when you're done.
+let aid = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];card.connect(); // You need to connect in order to issue commands.// Selects the aid above.let response = await card.sendCommand(Buffer.from([		[0x00, 0xA4, 0x04, 0x00, 0x00, 0x09, ...aid]]));console.log("Response", response); // Buffer < 90 00 >card.close(); // Don't forget to close the connection when you're done.
 ```
 <a name="Device"></a>
 
