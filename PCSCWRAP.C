@@ -122,7 +122,7 @@ LONG sc_init (sc_context *ctx, char *rdr)
                ctx->CLA = 0;
                ctx->proto = SCARD_PCI_T0; 
                ctx->rw = 0;
-               rc=SCardConnect(ctx->hCtx, cc, SCARD_SHARE_SHARED, 
+               rc=SCardConnect(ctx->hCtx, cc, SCARD_SHARE_EXCLUSIVE, 
                                SCARD_MYPROTOSET, &ctx->hCard, &dw);
                if (dw==SCARD_PROTOCOL_T1) ctx->proto=SCARD_PCI_T1;
                else if (dw==SCARD_PROTOCOL_RAW) ctx->proto=SCARD_PCI_RAW;

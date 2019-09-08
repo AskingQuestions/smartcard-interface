@@ -81,7 +81,26 @@ class Card extends EventEmitter {
 		if (win) {
 			return new Promise((resolve, reject) => {
 				try {
-					resolve(this.connection.sendCommand(APDUBuffer));
+					let response = this.connection.sendCommand(APDUBuffer);
+
+					if (APDUBuffer.length > 5) {
+						/*if (response[0] == 0x61) {
+							/*console.log(response);
+							let send = Buffer.from([
+								APDUBuffer[0],
+								0xC0,
+								0x00,
+								0x00,
+								response[1]
+							]);
+							console.log(send);
+							response = this.connection.sendCommand(send);
+							console.log(response);
+							response = this.connection.getResponse();
+						}*/
+					}
+
+					resolve(response);
 				}catch (e) {
 					reject("Unable to connect to device " + this.device.index);
 				}

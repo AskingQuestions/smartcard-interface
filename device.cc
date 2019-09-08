@@ -7,6 +7,7 @@ Napi::Object Device::Init(Napi::Env env, Napi::Object exports) {
 
   Napi::Function func = DefineClass(env, "Device", {
     InstanceMethod("sendCommand", &Device::SendCommand),
+    InstanceMethod("getResponse", &Device::GetResponse),
     InstanceMethod("close", &Device::Close)
   });
 
@@ -54,20 +55,40 @@ Napi::Value Device::Close(const Napi::CallbackInfo& info) {
 Napi::Value Device::SendCommand(const Napi::CallbackInfo& info) {
   Napi::Buffer<char> input = info[0].As<Napi::Buffer<char>>();
 
-  Napi::Buffer<char> bf = Napi::Buffer<char>::New(info.Env(), 255);
-  
-  char* raw = bf.Data();
-  for (int i = 0; i < 255; i++) {
-    raw[i] = 0x00;
-  }
-
   long rc = sc_rawsend(&(this->ctx), input.Data(), static_cast<unsigned char>(input.Length()));
 
   if (rc != SC_OK) {
     Napi::TypeError::New(info.Env(), rc_symb(rc)).ThrowAsJavaScriptException();
   }
 
-  for (int i = 0; i < sizeof(this->ctx.sw); i++) {
+  short outputLength = sizeof(this->ctx.sw);
+
+  Napi::Buffer<char> bf = Napi::Buffer<char>::New(info.Env(), outputLength);
+
+  char* raw = bf.Data();
+
+  for (int i = 0; i < outputLength; i++) {
+    raw[i] = this->ctx.sw[i];
+  }
+
+  return bf;
+}
+
+Napi::Value Device::GetResponse(const Napi::CallbackInfo& info) {
+  short outputLength = this->ctx.sw[1];
+  this->ctx.lCLA = 0;
+
+  long rc = sc_getresponse(&(this->ctx));
+
+  if (rc != SC_OK) {
+    Napi::TypeError::New(info.Env(), rc_symb(rc)).ThrowAsJavaScriptException();
+  }
+
+  Napi::Buffer<char> bf = Napi::Buffer<char>::New(info.Env(), outputLength);
+
+  char* raw = bf.Data();
+
+  for (int i = 0; i < outputLength; i++) {
     raw[i] = this->ctx.sw[i];
   }
 

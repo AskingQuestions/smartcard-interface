@@ -22,6 +22,7 @@ class Device : public Napi::ObjectWrap<Device> {
   static Napi::FunctionReference constructor;
 
   Napi::Value SendCommand(const Napi::CallbackInfo& info);
+  Napi::Value GetResponse(const Napi::CallbackInfo& info);
   Napi::Value Close(const Napi::CallbackInfo& info);
 
   double value_;
